@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+ 	  xmlns:h="http://java.sun.com/jsf/html"
+ 	  xmlns:ui="http://java.sun.com/jsf/facelets"
+ 	  xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="_template.xhtml">	
+<ui:define name="corpo">
+	<h:outputScript name="jsf.js" library="javax.faces" target="head"></h:outputScript>
+	
+	<h:form id="cadastra">
+	
+		<h2>
+			<h:outputText value="Novo Cliente" 
+				rendered="#{empty clienteBean.cliente.id}" />
+			<h:outputText value="Editar Cliente" 
+				rendered="#{not empty clienteBean.cliente.id}" />
+		</h2>
+		
+		<h:messages styleClass="erros" />
+		<p:fieldset legend="Dados do Cliente">
+			<h:inputHidden id="id" value="#{clienteBean.cliente.id}"/>
+			
+			<p:outputLabel value="Nome" for="nome" />
+			<p:inputText id="nome" value="#{clienteBean.cliente.nome}"
+					required="true" requiredMessage="O campo Nome é obrigatório!"/>
+			
+			<p:outputLabel value="E-mail" for="email" />
+			<p:inputText id="email" value="#{clienteBean.cliente.email}"
+					required="true" requiredMessage="O campo Email é obrigatório!"/>
+			
+			<p:outputLabel value="Endereço" for="endereco" />
+			<p:inputText id="endereco" value="#{clienteBean.cliente.endereco}"
+					required="true" requiredMessage="O campo Endereço é obrigatório!"/>
+			
+			<p:outputLabel value="Telefone" for="telefone"/>
+			<p:inputMask id="telefone" mask="(99)99999-9999"
+					 value="#{clienteBean.cliente.telefone}"
+					 required="true" requiredMessage="O campo Telefone é obrigatório!"/>
+			
+			<p:outputLabel value="CPF" for="cpf" />
+			<p:inputMask id="cpf" value="#{clienteBean.cliente.cpf}" mask="999.999.999-99"
+					required="true" requiredMessage="O campo CPF é obrigatório!"/>
+			
+			<p:commandButton value="Cancelar" action="#{clienteBean.cancelar}" 
+					rendered="#{not empty clienteBean.cliente.id}" ajax="false"> 
+				<p:ajax update="cadastra"></p:ajax>
+			</p:commandButton>
+			
+			<p:commandButton value="Gravar" action="#{clienteBean.grava}" ajax="false">
+				<p:ajax process=":cadastra" update="cadastra lista"></p:ajax>
+			</p:commandButton>
+		</p:fieldset>
+	</h:form>
+		
+	<h:form id="lista">
+		<p:dataTable value="#{clienteBean.clientes}" var="cliente" rows="4"
+			paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
+			{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+			
+			<p:column>
+			    <f:facet name="header">Id</f:facet>
+				#{cliente.id}
+			</p:column>
+		
+			<p:column>
+			    <f:facet name="header">Nome</f:facet>
+				#{cliente.nome}
+			</p:column>
+			
+			<p:column>
+			    <f:facet name="header">E-mail</f:facet>
+				#{cliente.email}
+			</p:column>
+			
+			<p:column>
+			    <f:facet name="header">Endereço</f:facet>
+				#{cliente.endereco}
+			</p:column>
+			
+			<p:column>
+			    <f:facet name="header">Telefone</f:facet>
+				#{cliente.telefone}
+			</p:column>
+			
+			<p:column>
+			    <f:facet name="header">CPF</f:facet>
+				#{cliente.cpf}
+			</p:column>
+			<p:column>
+				<f:facet name="header">Alterar</f:facet>
+				<h:commandLink value="Alterar" styleClass="btn">
+					<f:setPropertyActionListener value="#{cliente}" target="#{clienteBean.cliente}" />
+					<f:ajax render=":cadastra"></f:ajax>
+				</h:commandLink>
+			</p:column>
+			<p:column rendered="#{usuarioBean.usuario.papel eq 'gerente'}">
+				<f:facet name="header">Remover</f:facet>
+				<h:commandLink action="#{clienteBean.remover(cliente)}" 
+						value="Remover" styleClass="btn btn-danger">
+					<p:ajax render="@form"></p:ajax>	
+				</h:commandLink>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+</ui:define>
+</ui:composition>
+</html>

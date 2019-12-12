@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+ 	  xmlns:h="http://java.sun.com/jsf/html"
+ 	  xmlns:ui="http://java.sun.com/jsf/facelets"
+ 	  xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="_template.xhtml">	
+<ui:define name="corpo">
+		<h:outputScript name="jsf.js" library="javax.faces" target="head"></h:outputScript>
+		<h2>
+			<h:outputText value="Nova Peca" 
+				rendered="#{empty pecaBean.peca.id}" />
+			<h:outputText value="Editar Peca" 
+				rendered="#{not empty pecaBean.peca.id}" />
+		</h2>
+		<h:form id="cadastra">
+				<fieldset>
+				<legend>Dados da Peca</legend>
+				<h:outputLabel value="Id" for="id" rendered="false"/>
+				<h:inputText id="id" value="#{pecaBean.peca.id}" rendered="false"/>
+				
+				<h:outputLabel value="Nome" for="nome" />
+				<h:inputText id="nome" value="#{pecaBean.peca.nome}"/>
+				
+				<h:outputLabel value="Marca" for="marca" />
+				<h:inputText id="marca" value="#{pecaBean.peca.marca}"/>
+				
+				<h:outputLabel value="Tipo" for="tipo" />
+				<h:inputText id="tipo" value="#{pecaBean.peca.tipo}"/>
+				
+				<h:outputLabel value="Fornecedor" for="fornecedor" />
+				<h:inputText id="fornecedor" value="#{pecaBean.peca.fornecedor}"/>
+				
+				<h:outputLabel value="Preco" for="preco" />
+				<h:inputText id="preco" value="#{pecaBean.peca.preco}"/>
+				
+				<h:outputLabel value="Quantidade" for="quantidade" />
+				<h:inputText id="quantidade" value="#{pecaBean.peca.quantidade}"/>
+				
+				<h:commandButton value="Cancelar" action="#{pecaBean.cancela}"
+					rendered="#{not empty pecaBean.peca.id}" >
+						<f:ajax render=":cadastra"></f:ajax>
+				</h:commandButton>
+				<h:commandButton value="Gravar" action="#{pecaBean.grava}" >
+					<f:ajax execute="@form" render=":cadastra :lista"></f:ajax>
+				</h:commandButton>
+			</fieldset>
+		</h:form>
+		
+		<h:form id="lista">
+			<p:dataTable value="#{pecaBean.pecas}" var="peca"
+			 rows="4" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
+			{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+				
+				<p:column>
+				    <f:facet name="header">Id</f:facet>
+					#{peca.id}
+				</p:column>
+			
+				<p:column>
+				    <f:facet name="header">Nome</f:facet>
+					#{peca.nome}
+				</p:column>
+				
+				<p:column>
+				    <f:facet name="header">Marca</f:facet>
+					#{peca.marca}
+				</p:column>
+				
+				<p:column>
+				    <f:facet name="header">Tipo</f:facet>
+					#{peca.tipo}
+				</p:column>
+				
+				<p:column>
+				    <f:facet name="header">Fornecedor</f:facet>
+					#{peca.fornecedor}
+				</p:column>
+				
+				<p:column>
+				    <f:facet name="header">Preco</f:facet>
+					#{peca.preco}
+				</p:column>
+				
+				<p:column>
+				    <f:facet name="header">Quntidade</f:facet>
+					#{peca.quantidade}
+				</p:column>
+				
+				<p:column>
+					<f:facet name="header">Alterar</f:facet>
+					<h:commandLink value="Alterar" styleClass="btn">
+					<f:setPropertyActionListener value="#{peca}" target="#{pecaBean.peca}" />
+					<f:ajax render=":cadastra"></f:ajax>
+					</h:commandLink>
+				</p:column>
+				<p:column rendered="#{usuarioBean.usuario.papel eq 'gerente'}">
+					<f:facet name="header">Remover</f:facet>
+					<h:commandLink action="#{pecaBean.remover(peca)}" 
+						value="Remover" styleClass="btn btn-danger"
+						rendered="#{usuarioBean.usuario.papel eq 'gerente'}">
+						<f:ajax render="@form"></f:ajax>	
+					</h:commandLink>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+</ui:define>
+</ui:composition>
+</html>

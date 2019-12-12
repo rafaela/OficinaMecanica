@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+	  xmlns:p="http://primefaces.org/ui">
+	  
+<ui:composition template="_template.xhtml">
+<ui:define name="corpo">
+	<h:outputScript name="jsf.js" library="javax.faces" target="head"></h:outputScript>
+	<h2>Retirar Peça</h2>
+	
+	<h:form>
+		<h:dataTable value="#{ordemServicoBean.os.itens}" var="item"
+								styleClass="dados" rowClasses="ímpar,par">
+			<h:column>
+				<f:facet name="Id">Id</f:facet>
+				#{item.peca.id}
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header">Nome</f:facet>
+				#{item.peca.nome}
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header">Valor</f:facet>
+				#{item.peca.valor}
+			</h:column>
+				<f:facet name="header">Retirar peça</f:facet>
+				<h:commandLink value="Retirar peca" action="#{pecaBean.retirar(item.peca)}"/>
+			<h:column>
+			
+			</h:column>
+		</h:dataTable>
+	</h:form>
+	
+</ui:define>
+</ui:composition>	  
+
+</html>

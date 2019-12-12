@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:f="http://java.sun.com/jsf/core"
+xmlns:ui="http://java.sun.com/jsf/facelets"
+xmlns:p="http://primefaces.org/ui"
+>
+<ui:composition template="_template.xhtml">
+<ui:define name="corpo">
+		
+	<h:outputScript name="jsf.js" library="javax.faces" target="head"></h:outputScript>
+	<h:form id="cadastra">
+		<h:messages styleClass="erros"/>
+		<h2>
+			Ordem de Serviço
+		</h2>
+			<h:outputLabel value="Veículo:" for="veiculo"></h:outputLabel><br />
+				<p:selectOneMenu id="veiculo" value="#{ordemServicoBean.idVeiculo}" required="true" style="width: 300px">
+					<f:selectItems value="#{veiculoBean.veiculos}" var="veiculo"
+						itemLabel="Modelo: #{veiculo.modelo} - Placa: #{veiculo.placa}" itemValue="#{veiculo.id}">
+					</f:selectItems>
+					<p:ajax event="change" process="@this" update="@this"></p:ajax>
+				</p:selectOneMenu>
+				
+				<h:outputLabel value="Servico" for="servico"/>
+				<h:inputTextarea id="servico" value="#{ordemServicoBean.os.servico}"/>
+			
+				<h:form id="cardastroPeca">
+					<p:fieldset legend="Seleção de Peças">
+						<div>
+							<h:outputLabel value="Peça:" for="menu-pecas"></h:outputLabel><br /> 
+							<p:selectOneMenu id="menu-pecas" value="#{ordemServicoBean.idPeca}" style="width:450px">
+						               <f:selectItems value="#{ordemServicoBean.pecas}" var="p" itemLabel="#{p.nome}" 
+						               		itemValue="#{p.id}"/></p:selectOneMenu>
+						</div>
+						<div style="width: 200px">
+							<h:outputLabel for="qtde" value="Quantidade:"></h:outputLabel>
+							<p:inputText id="qtde" value="#{ordemServicoBean.quantidadePeca}" 
+								required="true" requiredMessage="Você deve informar a quantidade de peças para o serviço."></p:inputText>
+						</div>
+						
+						<p:commandButton value="Adicionar" action="#{ordemServicoBean.adicionarPeca}" ajax="false"> 
+							<p:ajax update="cardastroPeca"></p:ajax>
+						</p:commandButton>
+					</p:fieldset>
+				</h:form>
+				<br />
+				<p:commandButton value="Gravar" action="#{ordemServicoBean.grava}" ajax="false">
+					<p:ajax process=":cadastra" update="cadastra cardastroPeca"></p:ajax>
+				</p:commandButton>
+		</h:form>
+		
+		<h2>Listagem de peças do orçamento</h2>
+		
+		<h:form id="listaPecas">
+			<p:dataTable value="#{ordemServicoBean.pecasOrdem}" var="pecaOrdem" 
+					styleClass="dados" rowClasses="impar,par">
+				<p:column>
+					<f:facet name="header">Nome</f:facet>
+					#{pecaOrdem.peca.nome}
+				</p:column>
+				<p:column>
+					<f:facet name="header">Marca</f:facet>
+					#{pecaOrdem.peca.marca}
+				</p:column>
+				<p:column>
+					<f:facet name="header">Tipo</f:facet>
+					#{pecaOrdem.peca.tipo}
+				</p:column>
+				<p:column>
+					<f:facet name="header">Quantidade</f:facet>
+					#{pecaOrdem.quantidade}
+				</p:column>
+				<p:column>
+					<f:facet name="header">Total em Estoque</f:facet>
+					#{pecaOrdem.peca.quantidade}
+				</p:column>
+				<p:column>
+					<f:facet name="header">Remover</f:facet>
+					<p:commandLink action="#{ordemServicoBean.removePecaOrdem(pecaOrdem)}" value="Remover" ajax="false" 
+							styleClass="btn btn-danger">
+						<p:ajax update="listaPecas"></p:ajax>
+					</p:commandLink>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+		
+		
+		<h:form>
+			<p:dataTable value="#{ordemServicoBean.lista}" var="os" rows="4"
+			paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
+			{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+				<fieldset>
+					<p:column>
+						<f:facet name="header">ID</f:facet>
+						#{os.id}
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Veículo</f:facet>
+						#{os.veiculo.id}
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Data Orçamento</f:facet>
+						<h:outputText value="#{os.dataOrcamento.time}">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+						
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Serviço</f:facet>
+						#{os.servico}
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Valor</f:facet>
+						#{os.valor}
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Peças</f:facet>
+						<h:commandLink value="Pecas" action="retirarPeca"/>
+					</p:column>
+						
+					<p:column>
+						<f:facet name="header">Status</f:facet>
+						#{os.status}
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Aprovar Orçamento</f:facet>
+						<h:commandLink value="Aprovar" action="#{ordemServicoBean.aprovar(os)}"/>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Concluir Serviço</f:facet>
+						<h:commandLink value="Concluir" action="#{ordemServicoBean.concluir(os)}"/>
+					</p:column>
+					
+					<p:column rendered="#{ordemServicoBean.os.status eq 'Concluída'}">
+						<f:facet name="header">Data Serviço</f:facet>
+						<h:outputText value="#{ordemServicoBean.os.dataServico.time}">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Pagamento</f:facet>
+						<h:commandLink value="Pagamento" action="pagamento"/>
+						
+					</p:column>
+				</fieldset>
+			</p:dataTable>
+		</h:form>	
+	</ui:define>
+</ui:composition>
+</html>

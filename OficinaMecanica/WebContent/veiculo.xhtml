@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+ 	  xmlns:h="http://java.sun.com/jsf/html"
+ 	  xmlns:ui="http://java.sun.com/jsf/facelets"
+ 	  xmlns:p="http://primefaces.org/ui">
+			
+<ui:composition template="_template.xhtml">	
+<ui:define name="corpo">
+	<h:outputScript name="jsf.js" library="javax.faces" target="head"></h:outputScript>
+	<h:form id="cadastra">
+			<h2>
+				<h:outputText value="Novo Veiculo" 
+					rendered="#{empty veiculoBean.veiculo.id}" />
+				<h:outputText value="Editar Veículo" 
+					rendered="#{not empty veiculoBean.veiculo.id}" />
+			</h2>
+			<fieldset>
+			<legend>Dados do Veículo</legend>
+			
+			<h:outputLabel value="Id" for="id" rendered="false"/>
+			<h:inputText id="id" value="#{veiculoBean.veiculo.modelo}" rendered="false"/>
+			
+			<p:outputLabel value="Cliente:" for="clientes" /><br />
+			<p:selectOneMenu id="clientes" value="#{veiculoBean.idCliente}" style="width:500px"
+					 required="true" requiredMessage="O campo Cliente é obrigatório!">
+                <f:selectItems value="#{clienteBean.clientes}" var="cliente" 
+                	itemLabel="#{cliente.nome}" itemValue="#{cliente.id}"/>
+			</p:selectOneMenu>
+			
+			<h:outputLabel value="Modelo" for="modelo" />
+			<h:inputText id="modelo" value="#{veiculoBean.veiculo.modelo}"/>
+			
+			<h:outputLabel value="Marca" for="marca" />
+			<h:inputText id="marca" value="#{veiculoBean.veiculo.marca}"/>
+			
+			<p:outputLabel value="Placa" for="placa" />
+			<p:inputMask id="placa" mask="aaa-9999" value="#{veiculoBean.veiculo.placa}"/>
+			
+			<p:outputLabel value="Ano Fabricação" for="anoFabricacao" />
+			<p:inputMask mask="9999" id="anoFabricacao" value="#{veiculoBean.veiculo.anoFabricacao}"/>
+			
+			<h:outputLabel value="Ano Modelo" for="anoModelo" />
+			<p:inputMask mask="9999" id="anoModelo" value="#{veiculoBean.veiculo.anoModelo}"/>
+			
+			<h:commandButton value="Cancelar" action="#{veiculoBean.cancela}"
+				rendered="#{not empty veiculoBean.veiculo.id}" >
+					<f:ajax render=":cadastra"></f:ajax>
+			</h:commandButton>
+			
+			
+			<h:commandButton value="Gravar" action="#{veiculoBean.grava}" >
+				<f:ajax execute="@form" render=":cadastra :lista"></f:ajax>
+			</h:commandButton>
+		</fieldset>
+	</h:form>
+	
+	<h:form id="lista">
+		<p:dataTable value="#{veiculoBean.veiculos}" var="veiculo" rows="4"
+			paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
+			{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+			
+			<p:column>
+			    <f:facet name="header">Id</f:facet>
+				#{veiculo.id}
+			</p:column>
+		
+			<p:column>
+			    <f:facet name="header">Modelo</f:facet>
+				#{veiculo.modelo}
+			</p:column>
+			
+			<p:column>
+			    <f:facet name="header">Marca</f:facet>
+				#{veiculo.marca}
+			</p:column>
+			
+			<p:column>
+			    <f:facet name="header">Placa</f:facet>
+				#{veiculo.placa}
+			</p:column>
+			
+			<p:column>
+			    <f:facet name="header">Ano Fabricaçao</f:facet>
+				#{veiculo.anoFabricacao}
+			</p:column>
+			
+			<p:column>
+			    <f:facet name="header">Ano Modelo</f:facet>
+				#{veiculo.anoModelo}
+			</p:column>
+			
+			<p:column>
+			    <f:facet name="header">Cliente</f:facet>
+				#{veiculo.cliente.nome}
+			</p:column>
+			
+			<p:column>
+				<f:facet name="header">Alterar</f:facet>
+				<h:commandLink value="Alterar" styleClass="btn">
+					<f:setPropertyActionListener value="#{veiculo}" target="#{veiculoBean.veiculo}" />
+					<f:ajax render=":cadastra"></f:ajax>
+				</h:commandLink>
+			</p:column>
+			<p:column rendered="#{usuarioBean.usuario.papel eq 'gerente'}">
+				<f:facet name="header">Remover</f:facet>
+				<h:commandLink action="#{veiculoBean.remover(veiculo)}" 
+					value="Remover" styleClass="btn btn-danger">
+					<f:ajax render="@form"></f:ajax>	
+				</h:commandLink>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+</ui:define>
+</ui:composition>
+		
+</html>

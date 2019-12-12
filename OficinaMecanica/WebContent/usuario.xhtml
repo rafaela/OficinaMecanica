@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+	  xmlns:p="http://primefaces.org/ui">
+<ui:composition template="_template.xhtml">	
+<ui:define name="corpo">
+	<h:outputScript name="jsf.js" library="javax.faces" target="head"></h:outputScript>
+	
+	<h2>
+			<h:outputText value="Novo Usuario" 
+				rendered="#{empty usuarioBean.usuario.id}" />
+			<h:outputText value="Editar usuario" 
+				rendered="#{not empty usuarioBean.usuario.id}" />
+		</h2>
+		<h:form id="cadastra">
+				<fieldset>
+				<legend>Dados do usuario</legend>
+				<h:outputLabel value="Id" for="id" rendered="false"/>
+				<h:inputText id="id" value="#{usuarioBean.usuario.id}" rendered="false"/>
+				
+				<h:outputLabel value="Usuario" for="usuario" />
+				<h:inputText id="usuario" value="#{usuarioBean.usuario.usuario}"/>
+				
+				<h:outputLabel value="Senha" for="senha" />
+				<h:inputText id="senha" value="#{usuarioBean.usuario.senha}"/>
+				
+				<h:outputLabel value="Papel" for="papel" />
+				<h:inputText id="papel" value="#{usuarioBean.usuario.papel}"/>
+				
+				<h:commandButton value="Cancelar" action="#{usuarioBean.cancela}"
+					rendered="#{not empty usuarioBean.usuario.id}" >
+						<f:ajax render=":cadastra"></f:ajax>
+				</h:commandButton>
+				<h:commandButton value="Gravar" action="#{usuarioBean.grava}" >
+					<f:ajax execute="@form" render=":cadastra :lista"></f:ajax>
+				</h:commandButton>
+			</fieldset>
+		</h:form>
+		
+		<h:form id="lista">
+			<p:dataTable value="#{usuarioBean.usuarios}" var="usuario" rows="4"
+			paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
+			{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+				
+				<p:column>
+				    <f:facet name="header">Id</f:facet>
+					#{usuario.id}
+				</p:column>
+			
+				<p:column>
+				    <f:facet name="header">Usuario</f:facet>
+					#{usuario.usuario}
+				</p:column>
+				
+				<p:column>
+				    <f:facet name="header">Papel</f:facet>
+					#{usuario.papel}
+				</p:column>
+				
+				<p:column>
+					<f:facet name="header">Alterar</f:facet>
+					<h:commandLink value="Alterar" styleClass="btn">
+					<f:setPropertyActionListener value="#{usuario}" target="#{usuarioBean.usuario}" />
+					<f:ajax render=":cadastra"></f:ajax>
+					</h:commandLink>
+				</p:column>
+				<p:column>
+					<f:facet name="header">Remover</f:facet>
+					<h:commandLink action="#{usuarioBean.remover(usuario)}" 
+						value="Remover" styleClass="btn btn-danger">
+						<f:ajax render="@form"></f:ajax>	
+					</h:commandLink>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+
+</ui:define>
+</ui:composition>
+</html>

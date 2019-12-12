@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+ 	  xmlns:f="http://java.sun.com/jsf/core"
+ 	  xmlns:h="http://java.sun.com/jsf/html"
+ 	  xmlns:ui="http://java.sun.com/jsf/facelets"
+ 	  xmlns:p="http://primefaces.org/ui">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+		<title>Oficina do Hugo</title>
+		<h:outputStylesheet name="style.css" library="css"></h:outputStylesheet>
+				
+	</h:head>
+	<h:body>
+		<div id="cabecalho">
+			<h:form>
+				<div id="usuarioLogado">
+					<h:commandLink value="Pagina inicial" action="index"/>
+					<h:outputText value="Logado como: #{usuarioBean.usuario.usuario}"
+					 rendered="#{not empty usuarioBean.usuario.usuario}"/>
+					<h:commandLink value="Sair" action="#{usuarioBean.logout}" 
+					rendered="#{not empty usuarioBean.usuario.usuario}"/>
+				</div>
+			</h:form>
+		</div>
+		
+		<div id="conteudo">
+			<ui:insert name="corpo"/>
+		</div>
+		
+		
+		
+		<div id="rodape">
+			Copyright 2019. Todos os direitos reservados a Rafaela.
+		</div>
+	</h:body>
+</html>
